@@ -5,67 +5,83 @@ import * as XLSX from "xlsx";
 import jsPDF from "jspdf";
 import { Button } from "@mui/material";
 import Tray from "../Tray.jpg";
+import html2canvas from 'html2canvas';
+
 
 const UploadExcelFile = () => {
-  const [addedExcelfile, setAddedExcelFile] = useState(null);
-  const [excelFileName, setExcelFileName] = useState(null);
-  const [excelFileProgress, setExcelFileProgress] = useState(0);
-
-  const excelInputRef = useRef();
-
-  const uploadExcelFile = () => {
-    let progress = 0;
-    const uploadInterval = setInterval(() => {
-      progress += 45;
-      setExcelFileProgress(progress);
-
-      if (progress >= 100) {
-        clearInterval(uploadInterval);
-      }
-    }, 1000);
-  };
-
-  const handleFileUpload = (e) => {
-    const file = e.target.files[0];
-    setExcelFileName(file);
-    const reader = new FileReader();
-    reader.onload = (event) => {
-      const workbook = XLSX.read(event.target.result, { type: "binary" });
-      const sheetName = workbook.SheetNames[0];
-      const sheet = workbook.Sheets[sheetName];
-      const data = XLSX.utils.sheet_to_json(sheet);
-      setAddedExcelFile(data);
+    const [addedExcelfile, setAddedExcelFile] = useState(null);
+    const [excelFileName, setExcelFileName] = useState(null);
+    const [excelFileProgress, setExcelFileProgress] = useState(0);
+    const [toggle,setToggle] = useState(false);
+  
+    const excelInputRef = useRef();
+    const invoiceRefs = useRef([]); // array of refs
+  
+    const uploadExcelFile = () => {
+      let progress = 0;
+      const uploadInterval = setInterval(() => {
+        progress += 45;
+        setExcelFileProgress(progress);
+  
+        if (progress >= 100) {
+          clearInterval(uploadInterval);
+        }
+      }, 1000);
     };
-    reader.readAsBinaryString(file);
-    uploadExcelFile();
-  };
-
-  const generateInvoice = () => {
-    addedExcelfile.forEach((item, index) => {
-      const doc = new jsPDF();
-      let yPos = 10;
-      doc.text("Invoice", 10, yPos);
-      yPos += 10;
-      doc.text("-----------------------", 10, yPos);
-      yPos += 10;
-
-      Object.entries(item).forEach(([key, value]) => {
-        doc.text(`${key}: ${value}`, 10, yPos);
-        yPos += 10;
-      });
-
-      doc.save(`invoice_${index + 1}.pdf`);
-    });
-  };
-
-  const deleteUploadedExcelFile = () => {
-    setAddedExcelFile(null);
-    setExcelFileName(null);
-    setExcelFileProgress(0);
-    if (excelInputRef.current) {
-      excelInputRef.current.value = null;
-    }
-  };
+  
+    const handleFileUpload = (e) => {
+      const file = e.target.files[0];
+      setExcelFileName(file);
+      console.log(file,"FILE");
+      const reader = new FileReader();
+      reader.onload = (event) => {
+        const workbook = XLSX.read(event.target.result, { type: "binary" });
+        const sheetName = workbook.SheetNames[0];
+        const sheet = workbook.Sheets[sheetName];
+        const data = XLSX.utils.sheet_to_json(sheet);
+        setAddedExcelFile(data);
+      };
+      reader.readAsBinaryString(file);
+      uploadExcelFile();
+    };
+  
+    const deleteUploadedExcelFile = () => {
+      setAddedExcelFile(null);
+      setExcelFileName(null);
+      setExcelFileProgress(0);
+      if (excelInputRef.current) {
+        excelInputRef.current.value = null;
+      }
+    };
+  
+    const handleDownloadPdf = async () => {
+      for (let i = 0; i < invoiceRefs.current.length; i++) {
+        const element = invoiceRefs.current[i];
+        if (!element) continue; // skip if ref is not assigned
+        const canvas = await html2canvas(element);
+        const data = canvas.toDataURL('image/png');
+        const pdf = new jsPDF({
+          unit: 'mm',
+          format: 'a4',
+        });
+        const a4Width = 210;
+        const a4Height = 297;
+        const imgProperties = pdf.getImageProperties(data);
+        const imgWidth = imgProperties.width;
+        const imgHeight = imgProperties.height;
+        const desiredWidth = a4Width * 0.55;
+        const desiredHeight = a4Height * 0.55;
+        const scaleWidth = desiredWidth / imgWidth;
+        const scaleHeight = desiredHeight / imgHeight;
+        const scaleFactor = Math.min(scaleWidth, scaleHeight);
+        const pdfWidth = imgWidth * scaleFactor;
+        const pdfHeight = imgHeight * scaleFactor;
+        const xOffset = (a4Width - pdfWidth) / 2;
+        const yOffset = (a4Height - pdfHeight) / 2;
+        pdf.addImage(data, 'PNG', xOffset, yOffset, pdfWidth, pdfHeight);
+        pdf.save(`invoice_${i + 1}.pdf`);
+      }
+    };
 
   return (
     <div style={{ margin: "0 auto", textAlign: "center" }}>
@@ -230,15 +246,24 @@ const UploadExcelFile = () => {
       </div>
 
       {addedExcelfile && (
-        <Button
-          variant="contained"
-          style={{ marginTop: "10px" }}
-          onClick={generateInvoice}
-        >
-          Generate Invoices
-        </Button>
+        // <Button
+        //   variant="contained"
+        //   style={{ marginTop: "10px" }}
+        //   onClick={generateInvoice}
+        // >
+        //   Generate Invoices
+        // </Button>
+        <Button onClick={handleDownloadPdf}>Download PDF</Button>
+
       )}
-      <div style={{ width: "450px" }}>
+      <div style={{height:"600px",overflow:"auto"}}>
+
+    
+    { addedExcelfile?.length > 0 &&  
+    
+    addedExcelfile.map((data,index)=>(
+        <div style={{ width: "450px", maxWidth: "190mm", margin: "auto",paddingBottom:"20px" }}    ref={(el) => (invoiceRefs.current[index] = el)}>
+        
         <div style={{ border: "1px solid black" }}>
           <div
             style={{
@@ -246,6 +271,7 @@ const UploadExcelFile = () => {
               justifyContent: "center",
               position: "relative",
             }}
+         
           >
             <h4 style={{ textDecoration: "underline", margin: "0px" }}>
               Cash Memo
@@ -254,11 +280,15 @@ const UploadExcelFile = () => {
               Mob: 8108098410
             </h4>
           </div>
+          <div style={{position:"relative" }}
+          >
           <img
-            style={{ height: "10px", width: "10px" }}
+            style={{ height: "50px", width: "50px",left:"18px",top:"-15px", position:"absolute" }}
             src={Tray}
             alt="tray"
           />
+          </div>
+        
           <h1
             style={{
               fontFamily: "'DM Serif Text', serif",
@@ -283,11 +313,12 @@ const UploadExcelFile = () => {
               height: "35px",
             }}
           >
-            <h2 style={{ margin: "0px" }}>Name</h2>
-            <p style={{ position: "relative", left: "95px" }}>
+            <h3 style={{ margin: "0px",position:"absolute",left:"5px" }}>No: {addedExcelfile[0]?.["Bill Number"]}</h3>
+            <h2 style={{ margin: "0px",paddingRight:"15px" }}>{addedExcelfile[0].Name}</h2>
+            <p style={{ position: "relative", left: "95px",fontWeight:"700" }}>
               {" "}
               Date:
-              <span style={{ textDecoration: "underline" }}>05/04/2024</span>
+              <span style={{ textDecoration: "underline",fontSize:"1.2rem" }}>{excelFileName.name.replace(/\.[^/.]+$/, ``)}</span>
             </p>
           </div>
         </div>
@@ -341,8 +372,21 @@ const UploadExcelFile = () => {
                   padding: "8px",
                   width: "150px",
                   borderBottom: "1px solid black",
+                  position:"relative"
                 }}
-              ></td>
+              >
+                <div style={{position:"absolute",top:"20px" ,left:"30px" }}>
+                    <p style={{fontWeight:"600", fontSize:"1.4",marginBottom:"0px"}}>Previous Balance</p>
+                    <p style={{fontSize:"1.5rem",paddingTop:"0px",marginTop:"5px"}}>{data.Egg * data.Rate}</p>
+                </div>
+
+                <div style={{position:"absolute",top:"150px" ,left:"30px"}}>
+                    <p style={{fontWeight:"600", fontSize:"1.4",marginBottom:"0px"}}>CASH ONLINE</p>
+                    
+                </div>
+
+
+              </td>
               <td
                 style={{
                   border: "1px solid black",
@@ -413,6 +457,19 @@ const UploadExcelFile = () => {
                   verticalAlign: "bottom",
                 }}
               >
+                <div style={{position:"relative",bottom:"90px" , borderBottom:"1px solid black"}}>
+                    <p style={{margin:"0"}}>{data?.["Previous Balance"]}</p>
+                  <p style={{margin:"0",paddingTop:"3px"}}><span style={{left:"2px",position:"absolute", bottom:"2px"}}>+</span>{addedExcelfile[0]?.Amount}</p>
+                </div> 
+                <div style={{position:"relative", bottom:"100px"}}>
+                    <p> {data?.["Previous Balance"] +data?.Amount}</p>
+
+                    <div style={{position:"absolute", top:"50px", left:"30px"}}>
+                    <p>{data.Cash}</p>
+                    <p>{data.Online}</p>
+                </div>
+                </div>
+             
                 <p
                   style={{
                     fontSize: "13px",
@@ -442,7 +499,7 @@ const UploadExcelFile = () => {
                     borderLeft: "0px solid black",
                     paddingLeft: "8px",
                     paddingRight: "8px",
-                    height: "15px",
+                    height: "17px",
                   }}
                 ></p>
                 <p
@@ -460,12 +517,24 @@ const UploadExcelFile = () => {
                     paddingRight: "8px",
                     height: "15px",
                   }}
-                ></p>
+                > {data?.["Current Balance"]}</p>
               </td>
             </tr>
           </tbody>
         </table>
+        <div style={{borderBottom:"1px solid black", borderRight:"1px solid black", borderLeft:"1px solid black", display:"flex",height:"50px"}}>
+       
+                <p style={{padding:"0",margin:"0",paddingLeft:"5px",paddingTop:"5px"}}>Thank You!</p>
+           
+                <p style={{padding:"0",margin:"0",paddingLeft:"215px",paddingTop:"5px"}}>For KS EGG CENTER</p>
+                 
+        </div>
       </div>
+
+    ))
+    
+   }
+     </div>
     </div>
   );
 };
