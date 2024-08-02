@@ -44,6 +44,39 @@ const UploadExcelFile = () => {
       reader.readAsBinaryString(file);
       uploadExcelFile();
     };
+
+    //     const handleFileUpload = (e) => {
+    //   const file = e.target.files[0];
+    //   setExcelFileName(file);
+    //   console.log(file, "FILE");
+    
+    //   const reader = new FileReader();
+    //   reader.onload = (event) => {
+    //     const workbook = XLSX.read(event.target.result, { type: "binary" });
+    //     const sheetName = workbook.SheetNames[0];
+    //     const sheet = workbook.Sheets[sheetName];
+    
+    //     // Specify that headers are in the second row (index 1) and the data starts from the third row (index 2)
+    //     const data = XLSX.utils.sheet_to_json(sheet, { header: 1, range: 1 });
+    
+    //     // Extract headers from the second row and data from the rest
+    //     const headers = data[0];
+    //     const rows = data.slice(1);
+    
+    //     // Convert rows to objects with headers as keys
+    //     const formattedData = rows.map(row => {
+    //       return headers.reduce((acc, header, index) => {
+    //         acc[header] = row[index];
+    //         return acc;
+    //       }, {});
+    //     });
+    
+    //     setAddedExcelFile(formattedData);
+    //   };
+    //   reader.readAsBinaryString(file);
+    //   uploadExcelFile();
+    // };
+    
   
     const deleteUploadedExcelFile = () => {
       setAddedExcelFile(null);
