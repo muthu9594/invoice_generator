@@ -348,12 +348,14 @@ const UploadExcelFile = () => {
               height: "35px",
             }}
           >
-            <h3 style={{ margin: "0px",position:"absolute",left:"5px" }}>No: {addedExcelfile[0]?.["Bill Number"]}</h3>
-            <h2 style={{ margin: "0px",paddingRight:"15px" }}>{addedExcelfile[0].Name}</h2>
+            <h3 style={{ margin: "0px",position:"absolute",left:"5px" }}>No: {addedExcelfile?.["Bill Number"]}</h3>
+            <h2 style={{ margin: "0px",paddingRight:"15px" }}>{addedExcelfile.Name}</h2>
             <p style={{ position: "relative", left: "95px",fontWeight:"700" }}>
               {" "}
               Date:
-              <span style={{ textDecoration: "underline",fontSize:"1.2rem" }}>{excelFileName.name.replace(/\.[^/.]+$/, ``)}</span>
+              <span style={{ textDecoration: "underline",fontSize:"1.2rem" }}>
+                   {excelFileName.name.replace(/\.[^/.]+$/, '').replace(/shop/gi, '')}/, ``)}
+              </span>
             </p>
           </div>
         </div>
@@ -412,11 +414,12 @@ const UploadExcelFile = () => {
               >
                 <div style={{position:"absolute",top:"20px" ,left:"30px" }}>
                     <p style={{fontWeight:"600", fontSize:"1.4",marginBottom:"0px"}}>Previous Balance</p>
-                    <p style={{fontSize:"1.5rem",paddingTop:"0px",marginTop:"5px"}}>{data.Egg * data.Rate}</p>
+                    <p style={{fontSize:"1.5rem",paddingTop:"0px",marginTop:"5px"}}>{data.Egg} * {data.Rate}</p>
                 </div>
 
                 <div style={{position:"absolute",top:"150px" ,left:"30px"}}>
-                    <p style={{fontWeight:"600", fontSize:"1.4",marginBottom:"0px"}}>CASH ONLINE</p>
+                    <p style={{fontWeight:"600", fontSize:"1.4",marginBottom:"0px"}}>CASH</p>
+                    <p style={{fontWeight:"600", fontSize:"1.4",marginBottom:"0px"}}>ONLINE</p>
                     
                 </div>
 
@@ -493,15 +496,15 @@ const UploadExcelFile = () => {
                 }}
               >
                 <div style={{position:"relative",bottom:"90px" , borderBottom:"1px solid black"}}>
-                    <p style={{margin:"0"}}>{data?.["Previous Balance"]}</p>
-                  <p style={{margin:"0",paddingTop:"3px"}}><span style={{left:"2px",position:"absolute", bottom:"2px"}}>+</span>{addedExcelfile[0]?.Amount}</p>
+                    <p style={{margin:"0",fontSize:"15px",fontWeight:600  }}>{data?.["Previous Balance"]}</p>
+                  <p style={{margin:"0",paddingTop:"3px", fontSize:"15px",fontWeight:600 }}><span style={{left:"2px",position:"absolute", bottom:"2px"}}>+</span>{addedExcelfile[0]?.Amount}</p>
                 </div> 
                 <div style={{position:"relative", bottom:"100px"}}>
-                    <p> {data?.["Previous Balance"] +data?.Amount}</p>
+                    <p style={{fontSize:"15px",fontWeight:600}} > {data?.["Previous Balance"] +data?.Amount}</p>
 
                     <div style={{position:"absolute", top:"50px", left:"30px"}}>
-                    <p>{data.Cash}</p>
-                    <p>{data.Online}</p>
+                    <p style={{fontSize:"15px",fontWeight:600}}>{data.Cash}</p>
+                    <p style={{fontSize:"15px",fontWeight:600}}>{data.Online}</p>
                 </div>
                 </div>
              
@@ -539,7 +542,7 @@ const UploadExcelFile = () => {
                 ></p>
                 <p
                   style={{
-                    fontSize: "13px",
+                    fontSize: "15px",
                     whiteSpace: "nowrap",
                     fontWeight: "600",
                     paddingBottom: "3px",
