@@ -357,15 +357,15 @@ const UploadExcelFile = () => {
               top:"9px"
             }}
           >
-            <h3 style={{ margin: "0px",position:"absolute",left:"5px" }}>No: {addedExcelfile?.["Bill Number"]}</h3>
-            <h2 style={{ margin: "0px",paddingLeft:"8px" ,fontSize:"20px" }}>{data.Name}</h2>
+            <h3 style={{ margin: "0px",position:"absolute",left:"5px" }}>No: {data?.["Bill Number"] || '-'}</h3>
+            <h2 style={{ margin: "0px",paddingLeft:"8px" ,fontSize:"20px" }}>{data.Name || '-'}</h2>
             <p style={{ position: "relative", left: "95px",fontWeight:"700" }}>
               {" "}
               Date:
               <span style={{ textDecoration: "underline",fontSize:"15px",fontWeight:"600" }}>
                    {/* {excelFileName.name.replace(/\.[^/.]+$/, '').replace(/shop/gi, '')}/, ``)} */}
                    {/* {excelFileName.name.replace(/\.[^/.]+$/, '').replace(/shop/gi, '')}/, ``)} */}
-                   {extractDateFromFileName(excelFileName.name)}
+                   {extractDateFromFileName(excelFileName.name) || '-'}
 
               </span>
             </p>
@@ -424,18 +424,24 @@ const UploadExcelFile = () => {
                   position:"relative"
                 }}
               >
-                <div style={{position:"absolute",top:"20px" ,left:"30px" }}>
+                <div style={{position:"absolute",top:"0px" ,left:"30px" }}>
                     <p style={{fontWeight:"600", fontSize:"16px",marginBottom:"0px"}}>Previous Balance</p>
                     <p style={{fontSize:"16px",fontWeight:"400",paddingTop:"0px",marginBottom:"4px",marginTop:"0px"}}>(Egg x Rate)</p>
 
-                    <p style={{fontSize:"16px",fontWeight:"600",paddingTop:"0px",marginTop:"0px"}}>{data.Egg} x {data.Rate}</p>
+                    <p style={{fontSize:"16px",fontWeight:"600",paddingTop:"0px",marginTop:"0px"}}>{data.Egg || '-'} x {data.Rate || '-'}</p>
                 </div>
 
-                <div style={{position:"absolute",top:"135px" ,left:"55px"}}>
+                <div style={{position:"absolute",top:"92px" ,left:"62px"}}>
                     <p style={{fontWeight:"600", fontSize:"1.4",marginBottom:"0px"}}>Cash</p>
                     <p style={{fontWeight:"600", fontSize:"1.4",marginBottom:"0px"}}>Online</p>
                     
                 </div>
+
+               { (data.Adjustment || data?.['Adjustment Amount']) && <div style={{position:"absolute",bottom:"60px" ,left:"20px"}}>
+                    <p style={{fontWeight:"600", fontSize:"1.4",marginBottom:"0px"}}>Adjustment</p>
+                    <p style={{fontWeight:"600", fontSize:"1.4",marginBottom:"0px"}}>Adjustment Amount</p>
+                    
+                </div>}
 
 
               </td>
@@ -509,16 +515,21 @@ const UploadExcelFile = () => {
                   verticalAlign: "bottom",
                 }}
               >
-                <div style={{position:"relative",bottom:"116px" , borderBottom:"1px solid black"}}>
-                    <p style={{margin:"0",fontSize:"15px",fontWeight:600  }}>{data?.["Previous Balance"]}</p>
-                  <p style={{margin:"0",paddingTop:"3px", fontSize:"15px",fontWeight:600 }}><span style={{left:"2px",position:"absolute", bottom:"2px"}}>+</span>{data?.Amount}</p>
+                <div style={{position:"relative",bottom:"145px" , borderBottom:"1px solid black"}}>
+                    <p style={{margin:"0",fontSize:"15px",fontWeight:600  }}>{data?.["Previous Balance"] || '-'}</p>
+                  <p style={{margin:"0",paddingTop:"3px", fontSize:"15px",fontWeight:600 }}><span style={{left:"2px",position:"absolute", bottom:"2px"}}>+</span>{data?.Amount || '-'}</p>
                 </div> 
-                <div style={{position:"relative", bottom:"123px"}}>
-                    <p style={{fontSize:"15px",fontWeight:600}} > {data?.["Previous Balance"] +data?.Amount}</p>
+                <div style={{position:"relative", bottom:"155px"}}>
+                    <p style={{fontSize:"15px",fontWeight:600}} > {data?.["Previous Balance"] + data?.Amount || '-'}</p>
 
-                    <div style={{position:"absolute", top:"50px", left:"30px"}}>
-                    <p style={{fontSize:"15px",fontWeight:600}}>{data.Cash}</p>
-                    <p style={{fontSize:"15px",fontWeight:600}}>{data.Online}</p>
+                    <div style={{position:"absolute", top:"30px", left:"30px"}}>
+                    <p style={{fontSize:"15px",fontWeight:600}}>{`${data.Cash} ` || '-'}</p>
+                    <p style={{fontSize:"15px",fontWeight:600}}>{data.Online || '-'}</p>
+                </div>
+                
+                <div style={{position:"absolute", top:"117px", left:"35px"}}>
+                    <p style={{fontSize:"15px",fontWeight:600}}>{data.Adjustment || '-'}</p>
+                    <p style={{fontSize:"15px",fontWeight:600}}>{data?.['Adjustment Amount']|| '-'}</p>
                 </div>
                 </div>
              
@@ -551,7 +562,7 @@ const UploadExcelFile = () => {
                     borderLeft: "0px solid black",
                     paddingLeft: "8px",
                     paddingRight: "8px",
-                    height: "15px",
+                    height: "16.3px",
                   }}
                 ></p>
                 <p
@@ -569,7 +580,7 @@ const UploadExcelFile = () => {
                     paddingRight: "8px",
                     height: "15px",
                   }}
-                > {data?.["Current Balance"]}</p>
+                > {data?.["Current Balance"] || '-'}</p>
               </td>
             </tr>
           </tbody>

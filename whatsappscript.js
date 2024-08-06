@@ -8,7 +8,7 @@ const path = require('path');
   await page.goto('https://web.whatsapp.com');
 
   console.log('Please scan the QR code within the next 30 seconds.');
-  await new Promise(resolve => setTimeout(resolve, 30000)); // Wait for user to scan QR code
+  await new Promise(resolve => setTimeout(resolve, 300000)); // Wait for user to scan QR code
 
   const sendMessage = async (phoneNumber, filePath) => {
     const chatId = `${phoneNumber}@c.us`;
@@ -19,7 +19,7 @@ const path = require('path');
     await page.waitForSelector('div._1awRl.copyable-text.selectable-text', { visible: true });
 
     // Add a small delay to ensure the chat is loaded
-    await new Promise(resolve => setTimeout(resolve, 2000));
+    await new Promise(resolve => setTimeout(resolve, 10000));
 
     // Attach the PDF
     const [fileChooser] = await Promise.all([
@@ -27,14 +27,19 @@ const path = require('path');
       page.click('span[data-icon="clip"]') // Click the attachment button
     ]);
 
+    console.log('File chooser opened');
+    
     await fileChooser.accept([filePath]);
+
+    console.log('File selected');
+
     await page.waitForSelector('span[data-icon="send"]', { visible: true });
     await page.click('span[data-icon="send"]');
 
     console.log(`PDF sent to ${phoneNumber}`);
   };
 
-  const phoneNumber = '1234567890'; // Replace with the recipient's phone number
+  const phoneNumber = '+919594018671'; // Replace with the recipient's phone number
   const filePath = path.resolve(__dirname, 'invoice.pdf'); // Path to the PDF file
 
   await sendMessage(phoneNumber, filePath);
