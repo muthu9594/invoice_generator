@@ -370,6 +370,7 @@ const UploadExcelFile = () => {
   width: "100%",
   overflow: "auto",
   display: "flex",
+    flexDirection:"column",
   justifyContent: "center", // Center horizontally
   alignItems: "center", // Center vertically
   textAlign: "center" // Optional: Center text inside the content
@@ -511,7 +512,7 @@ const UploadExcelFile = () => {
                 </div>
 
                   { data.Adjustment && <div style={{position:"absolute",bottom:"90px" ,left:"60px"}}>
-                    <p style={{fontWeight:"600", fontSize:"1.4",marginBottom:"0px"}}>{data.Adjustment}</p>
+                    <p style={{fontWeight:"600", fontSize:"1.4",marginBottom:"0px"}}>{data.Adjustment || '-'}</p>
      
                     
                 </div>}
