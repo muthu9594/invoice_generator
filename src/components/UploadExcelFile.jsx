@@ -142,7 +142,7 @@ const UploadExcelFile = () => {
       const style = document.createElement('style');
       style.innerHTML = `
         .a4-page {
-          width: 50%; /* A4 width */
+          width: 450px; /* A4 width */
           height: 600px; /* A4 height */
           margin: auto;
           padding: 20px;
