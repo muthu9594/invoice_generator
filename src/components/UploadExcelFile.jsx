@@ -89,35 +89,101 @@ const UploadExcelFile = () => {
       }
     };
   
-    const handleDownloadPdf = async () => {
+    // const handleDownloadPdf = async () => {
+    //   for (let i = 0; i < invoiceRefs.current.length; i++) {
+    //     const element = invoiceRefs.current[i];
+    //     if (!element) continue; // skip if ref is not assigned
+    //     const canvas = await html2canvas(element);
+    //     const data = canvas.toDataURL('image/png');
+    //     const pdf = new jsPDF({
+    //       unit: 'mm',
+    //       format: 'a4',
+    //     });
+    //     const a4Width = 210;
+    //     const a4Height = 297;
+    //     const imgProperties = pdf.getImageProperties(data);
+    //     console.log(imgProperties,"IMAGEPROPERTIES")
+    //     const imgWidth = imgProperties.width;
+    //     const imgHeight = imgProperties.height;
+    //     const desiredWidth = a4Width * 0.55;
+    //     const desiredHeight = a4Height * 0.55;
+    //     const scaleWidth = desiredWidth / imgWidth;
+    //     const scaleHeight = desiredHeight / imgHeight;
+    //     const scaleFactor = Math.min(scaleWidth, scaleHeight);
+    //     const pdfWidth = imgWidth * scaleFactor;
+    //     const pdfHeight = imgHeight * scaleFactor;
+    //     const xOffset = (a4Width - pdfWidth) / 2;
+    //     const yOffset = (a4Height - pdfHeight) / 2;
+    //     pdf.addImage(data, 'PNG', xOffset, yOffset, pdfWidth, pdfHeight);
+    //     pdf.save(`invoice_${extractDateFromFileName(excelFileName.name)}_${addedExcelfile[i].Name}.pdf`);
+    //   }
+    // };
+
+
+    // const handleDownloadImages = async () => {
+    //   for (let i = 0; i < invoiceRefs.current.length; i++) {
+    //     const element = invoiceRefs.current[i];
+    //     if (!element) continue; // skip if ref is not assigned
+        
+    //     const canvas = await html2canvas(element);
+    //     const dataUrl = canvas.toDataURL('image/png');
+
+    //     // Create a download link and trigger a click to download the image
+    //     const link = document.createElement('a');
+    //     link.href = dataUrl;
+    //     link.download = `invoice_${extractDateFromFileName(excelFileName.name)}_${addedExcelfile[i].Name}.png`;
+    //     link.click();
+    //   }
+    // };
+
+    const handleDownloadImages = async () => {
+    
+      // Create a <style> element with A4 page styles
+      const style = document.createElement('style');
+      style.innerHTML = `
+        .a4-page {
+          width: 50%px; /* A4 width */
+          height: 600px; /* A4 height */
+          margin: auto;
+          padding: 20px;
+          box-sizing: border-box;
+          position: relative;
+          background: #fff; /* Background color if needed */
+          overflow: hidden;
+        }
+      `;
+      document.head.appendChild(style);
+    
       for (let i = 0; i < invoiceRefs.current.length; i++) {
         const element = invoiceRefs.current[i];
-        if (!element) continue; // skip if ref is not assigned
-        const canvas = await html2canvas(element);
-        const data = canvas.toDataURL('image/png');
-        const pdf = new jsPDF({
-          unit: 'mm',
-          format: 'a4',
-        });
-        const a4Width = 210;
-        const a4Height = 297;
-        const imgProperties = pdf.getImageProperties(data);
-        console.log(imgProperties,"IMAGEPROPERTIES")
-        const imgWidth = imgProperties.width;
-        const imgHeight = imgProperties.height;
-        const desiredWidth = a4Width * 0.55;
-        const desiredHeight = a4Height * 0.55;
-        const scaleWidth = desiredWidth / imgWidth;
-        const scaleHeight = desiredHeight / imgHeight;
-        const scaleFactor = Math.min(scaleWidth, scaleHeight);
-        const pdfWidth = imgWidth * scaleFactor;
-        const pdfHeight = imgHeight * scaleFactor;
-        const xOffset = (a4Width - pdfWidth) / 2;
-        const yOffset = (a4Height - pdfHeight) / 2;
-        pdf.addImage(data, 'PNG', xOffset, yOffset, pdfWidth, pdfHeight);
-        pdf.save(`invoice_${extractDateFromFileName(excelFileName.name)}_${addedExcelfile[i].Name}.pdf`);
+        if (!element) continue; // Skip if ref is not assigned
+    
+        try {
+          // Ensure the A4 page class is applied
+          element.classList.add('a4-page');
+    
+          // Capture the A4 page as a canvas
+          const canvas = await html2canvas(element, { useCORS: true });
+          const dataUrl = canvas.toDataURL('image/png');
+    
+          // Create a download link and trigger a click to download the image
+          const link = document.createElement('a');
+          link.href = dataUrl;
+          link.download = `invoice_${extractDateFromFileName(excelFileName.name)}_${addedExcelfile[i]?.Name || 'default'}.png`;
+          link.click();
+    
+          // Clean up by removing the A4 page class
+          element.classList.remove('a4-page');
+        } catch (error) {
+          console.error("Error capturing or downloading image:", error);
+        }
       }
+    
+      // Clean up the <style> element
+      document.head.removeChild(style);
+    
     };
+    
 
 
     const extractDateFromFileName = (fileName) => {
@@ -296,16 +362,23 @@ const UploadExcelFile = () => {
         // >
         //   Generate Invoices
         // </Button>
-        <Button onClick={handleDownloadPdf}>Download PDF</Button>
+        <Button onClick={handleDownloadImages}>Download</Button>
 
       )}
-      <div style={{height:"600px",overflow:"auto"}}>
-
+<div style={{
+  height: "600px",
+  width: "100%",
+  overflow: "auto",
+  display: "flex",
+  justifyContent: "center", // Center horizontally
+  alignItems: "center", // Center vertically
+  textAlign: "center" // Optional: Center text inside the content
+}}>
     
     { addedExcelfile?.length > 0 &&  
     
     addedExcelfile.map((data,index)=>(
-        <div style={{ width: "450px", maxWidth: "190mm", margin: "auto",paddingBottom:"20px" }}    ref={(el) => (invoiceRefs.current[index] = el)}>
+        <div style={{ width: "35%", margin: "auto",paddingBottom:"20px" }}    ref={(el) => (invoiceRefs.current[index] = el)}>
         
         <div style={{ border: "1px solid black" }}>
           <div
@@ -359,7 +432,7 @@ const UploadExcelFile = () => {
           >
             <h3 style={{ margin: "0px",position:"absolute",left:"5px" }}>No: {data?.["Bill Number"] || '-'}</h3>
             <h2 style={{ margin: "0px",paddingLeft:"8px" ,fontSize:"20px" }}>{data.Name || '-'}</h2>
-            <p style={{ position: "relative", left: "95px",fontWeight:"700" }}>
+            <p style={{ position: "relative", left: "28%",fontWeight:"700" }}>
               {" "}
               Date:
               <span style={{ textDecoration: "underline",fontSize:"15px",fontWeight:"600" }}>
@@ -375,7 +448,7 @@ const UploadExcelFile = () => {
           style={{
             border: "1px solid black",
             borderCollapse: "collapse",
-            width: "450px",
+            width: "100%",
           }}
         >
           <thead>
@@ -603,3 +676,6 @@ const UploadExcelFile = () => {
 };
 
 export default UploadExcelFile;
+
+
+
