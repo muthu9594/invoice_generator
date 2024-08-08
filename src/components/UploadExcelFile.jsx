@@ -510,7 +510,7 @@ const UploadExcelFile = () => {
                     
                 </div>
 
-                  { (data.Adjustment && <div style={{position:"absolute",bottom:"60px" ,left:"20px"}}>
+                  { data.Adjustment && <div style={{position:"absolute",bottom:"60px" ,left:"20px"}}>
                     <p style={{fontWeight:"600", fontSize:"1.4",marginBottom:"0px"}}>{data.Adjustment}</p>
      
                     
