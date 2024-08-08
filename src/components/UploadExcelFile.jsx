@@ -510,9 +510,9 @@ const UploadExcelFile = () => {
                     
                 </div>
 
-               { (data.Adjustment || data?.['Adjustment Amount']) && <div style={{position:"absolute",bottom:"60px" ,left:"20px"}}>
-                    <p style={{fontWeight:"600", fontSize:"1.4",marginBottom:"0px"}}>Adjustment</p>
-                    <p style={{fontWeight:"600", fontSize:"1.4",marginBottom:"0px"}}>Adjustment Amount</p>
+                  { (data.Adjustment && <div style={{position:"absolute",bottom:"60px" ,left:"20px"}}>
+                    <p style={{fontWeight:"600", fontSize:"1.4",marginBottom:"0px"}}>{data.Adjustment}</p>
+     
                     
                 </div>}
 
@@ -601,7 +601,7 @@ const UploadExcelFile = () => {
                 </div>
                 
                 <div style={{position:"absolute", top:"117px", left:"35px"}}>
-                    <p style={{fontSize:"15px",fontWeight:600}}>{data.Adjustment || '-'}</p>
+                   
                     <p style={{fontSize:"15px",fontWeight:600}}>{data?.['Adjustment Amount']|| '-'}</p>
                 </div>
                 </div>
