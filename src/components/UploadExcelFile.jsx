@@ -649,9 +649,13 @@ const UploadExcelFile = () => {
         // Create a download link and trigger a click to download the image
         const link = document.createElement("a");
         link.href = dataUrl;
-        link.download = `invoice_${extractDateFromFileName(
-          excelFileName.name
-        )}_${addedExcelfile[i]?.Name || "default"}.png`;
+        // link.download = `invoice_${extractDateFromFileName(
+        //   excelFileName.name
+        // )}_${addedExcelfile[i]?.Name || "default"}.png`;
+
+
+       link.download =  `invoice_${extractDateFromFileName(excelFileName?.name)}_${addedExcelfile?.mergedData[i]?.Name}.png`
+       
         link.click();
 
         // Clean up by removing the A4 page class
