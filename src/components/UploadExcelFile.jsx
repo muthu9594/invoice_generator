@@ -1302,7 +1302,7 @@ const UploadExcelFile = () => {
                           {data?.Amount || "-"}
                         </p>
                       </div>
-                      <div style={{ position: "relative", bottom: "165px" }}>
+                      <div style={{ position: "relative", bottom: "10rem" }}>
                         <p style={{ fontSize: "15px", fontWeight: 600 }}>
                           {" "}
                           {data?.["Previous Balance"] + data?.Amount || "-"}
@@ -1343,7 +1343,7 @@ const UploadExcelFile = () => {
                           fontSize: "13px",
                           whiteSpace: "nowrap",
                           fontWeight: "600",
-                          paddingBottom: "3px",
+                          paddingBottom: "0.8px",
                           margin: "0px",
                           borderTop: "1.4px solid black",
                           borderBottom: "1.4px solid black",
